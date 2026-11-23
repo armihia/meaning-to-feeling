@@ -1,0 +1,16 @@
+.env
+.runtime/
+models/
+*.gguf
+*.safetensors
+*.pt
+*.sqlite*
+__pycache__/
+*.egg-info/
+build/
+dist/
+outputs/
+.pytest_cache/
+.ruff_cache/
+model_weights/**/runtime/
+*.partial

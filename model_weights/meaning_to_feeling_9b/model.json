@@ -1,0 +1,141 @@
+{
+  "model": "qwen3.5:9b",
+  "G_dimensions": 12,
+  "G_shrinkage": 3,
+  "heads": {
+    "query": {
+      "name": "unified_deployment_query_20261028",
+      "type": "trace_affine",
+      "semantic_model": "qwen3.5:9b",
+      "semantic_interface": "nine-emotion-activation-composition-v1",
+      "emotion_order": [
+        "joy",
+        "sadness",
+        "anger",
+        "fear",
+        "surprise",
+        "anxiety",
+        "frustration",
+        "confusion",
+        "guilt",
+        "neutral"
+      ],
+      "prior": [
+        0.08190678446030131,
+        0.016725711218464844,
+        0.008768115942028986,
+        0.0010211408057439171,
+        0.013115942028985509,
+        0.017665204095200112,
+        0.014710144927536237,
+        0.044855072463768124,
+        0.007826086956521741,
+        0.7934057971014499
+      ],
+      "semantic_mean": [
+        0.035628019323671496,
+        0.009041501976284587,
+        0.002898550724637682,
+        0.005176767676767678,
+        0.01570048309178744,
+        0.007833772507685553,
+        0.01230237154150198,
+        0.022946859903381647,
+        0.004413702239789197,
+        0.8840579710144933
+      ],
+      "gain": 0.7470479168464753,
+      "alpha": 10.0,
+      "gain_numerator": 4.655410583465339,
+      "gain_denominator": 9.617765143272797,
+      "state_delta_weight": 0.5,
+      "points": 91,
+      "trials": 31,
+      "people": 23,
+      "context_baseline_points": 31,
+      "source_head_semantic_interface": "nine-emotion-levels-v2",
+      "raw_readout_variant": "activation_times_emotion9_composition",
+      "calibration_mode": "role_affine",
+      "fit_role_group": "query"
+    },
+    "history": {
+      "name": "unified_deployment_history_20261028",
+      "type": "trace_affine",
+      "semantic_model": "qwen3.5:9b",
+      "semantic_interface": "nine-emotion-activation-composition-v1",
+      "emotion_order": [
+        "joy",
+        "sadness",
+        "anger",
+        "fear",
+        "surprise",
+        "anxiety",
+        "frustration",
+        "confusion",
+        "guilt",
+        "neutral"
+      ],
+      "prior": [
+        0.10700392007877473,
+        0.022946625492072072,
+        0.038450624021215574,
+        0.010886538460917295,
+        0.05321369290665443,
+        0.026576243757562998,
+        0.016887848839010164,
+        0.056210857320542304,
+        0.021446050861723666,
+        0.6463775982615261
+      ],
+      "semantic_mean": [
+        0.0665839947089947,
+        0.018437730581650644,
+        0.018665764586257776,
+        0.002166989480977576,
+        0.009200770255192024,
+        0.009921056716337329,
+        0.034395797340100065,
+        0.006594719567721267,
+        0.013388807904114026,
+        0.8206443688586552
+      ],
+      "gain": 0.2606023335352535,
+      "alpha": 10.0,
+      "gain_numerator": 22.984347706574653,
+      "gain_denominator": 116.56965599317103,
+      "state_delta_weight": 0.5,
+      "points": 662,
+      "trials": 226,
+      "people": 42,
+      "context_baseline_points": 226,
+      "source_head_semantic_interface": "nine-emotion-levels-v2",
+      "raw_readout_variant": "activation_times_emotion9_composition",
+      "calibration_mode": "role_affine",
+      "fit_role_group": "history"
+    }
+  },
+  "fit_counts": {
+    "query": {
+      "trials": 31,
+      "points": 91,
+      "people": 23
+    },
+    "history": {
+      "trials": 226,
+      "points": 662,
+      "people": 42
+    }
+  },
+  "runtime_config": {
+    "pooling": "none",
+    "device": "cuda",
+    "mode": "embedding",
+    "context_size": 2048,
+    "gpu_layers": null,
+    "micro_batch_size": 1024
+  },
+  "semantic_interface": "nine-emotion-activation-composition-v1",
+  "fitting_scope": "部署用原214训练+43开发重新拟合相同数值头，原reserved107未纳入；主表是另存三折留人留材料结果，不是本部署拟合的重测。",
+  "weights": "复用既有9B GGUF；此文件只保存数值头，不复制底座。",
+  "new_neural_training": false
+}

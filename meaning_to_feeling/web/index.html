@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>意元与感受 · 模型试用台</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="意元与感受首页"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>意元与感受<span class="brand-en">MEANING TO FEELING</span></span></a>
+    <div class="top-actions"><span id="modelStatus" class="status-pill"><span></span>连接中</span><button id="loadModel" class="text-button">加载模型</button><button id="unloadModel" class="text-button" disabled>释放显存</button><button id="helpButton" class="help-button" aria-label="怎么使用试用台">?</button></div>
+  </header>
+  <main>
+    <section class="intro"><div class="eyebrow">LOCAL MODEL STUDIO <span>本地试用</span></div><h1>一句话，怎样变成一段感受？</h1><p>选一个个人向量，写下句子与语境，看意义与感受如何展开。</p><p id="releaseInfo" class="release-info"></p></section>
+    <div class="workspace">
+      <form id="analysisForm" class="control-card">
+        <section class="form-section">
+          <div class="section-title"><span class="step">1</span><h2>选一个个人向量</h2></div>
+          <div class="input-tabs" role="tablist" aria-label="个人向量输入方式"><button type="button" class="selected" data-mode="preset" role="tab" aria-selected="true">选择示例</button><button type="button" data-mode="custom" role="tab" aria-selected="false">自己输入</button><button type="button" data-mode="history" role="tab" aria-selected="false">历史生成</button></div>
+          <div id="presetPanel" class="mode-panel"><label class="sr-only" for="profileSelect">示例个人向量</label><select id="profileSelect"></select><div class="profile-caption"><span id="profileSource" class="source-tag"></span><span id="profileDescription"></span></div><details class="vector-details"><summary>查看这个向量</summary><pre id="presetVector"></pre><button type="button" id="editPreset" class="text-button">复制到输入区调整</button></details></div>
+          <div id="customPanel" class="mode-panel" hidden><div class="field-head"><label for="customName">向量名称</label><button type="button" id="importVector" class="text-button">导入JSON文件</button></div><input id="customName" value="我的向量" maxlength="60"><label for="profileJSON" class="field-label">个人向量</label><textarea id="profileJSON" class="code-input" rows="5" placeholder="粘贴完整profile.json，或12个数的数组"></textarea><p class="field-note">12维数组可直接输入。新版历史融合和正文变化档案请导入完整profile.json。</p><button type="button" id="downloadVector" class="text-button">保存这个向量</button><input type="file" id="profileFile" accept=".json,application/json" hidden></div>
+          <div id="historyPanel" class="mode-panel" hidden>
+            <div class="field-head"><label for="historyJSON">在其他材料上的历史作答</label><button type="button" id="historyExample" class="text-button">填入格式示例</button></div>
+            <textarea id="historyJSON" class="code-input" rows="7" placeholder="粘贴包含emotion_order和history的JSON"></textarea>
+            <p class="field-note">填写读过的文本、语境、切分和情绪记录，生成向量后再分析新句子。</p>
+            <div id="historyCutoffOptions" hidden>
+              <label for="historyAsOf" class="field-label">新句子的开读时间（可选）</label>
+              <input id="historyAsOf" type="text" placeholder="2026-11-19T09:00:00+08:00" aria-describedby="historyCutoffHint" autocomplete="off" spellcheck="false">
+              <p id="historyCutoffHint" class="field-note">填写带时区的时间后，只用提交时间（finished_at）在该时刻或更早的作答。</p>
+            </div>
+            <label for="profileGenerator" class="field-label">向量生成方式</label>
+            <select id="profileGenerator"><option value="original">原版校准 · 12维</option></select>
+            <p class="field-note">新版分别使用开始前与阅读中的历史感受，每段材料等权。选择原版可比较两种生成方式。</p>
+            <button type="button" id="generateProfile" class="secondary-button full-width">从这些历史生成向量</button>
+          </div>
+          <details id="profileInterpretation" class="profile-interpretation"><summary>这些参数会怎样影响结果？</summary><div id="profileDetailsBody" class="profile-details-body"></div></details>
+        </section>
+        <section class="form-section text-section">
+          <div class="section-title"><span class="step">2</span><h2>填写句子与语境</h2><button type="button" id="clearInput" class="text-button push-right">清空</button></div>
+          <label class="sr-only" for="exampleSelect">选择句子示例</label><select id="exampleSelect" class="example-select"></select>
+          <div class="field-head"><label for="textInput">第一人称句子</label><span id="textCount" class="muted">0 字</span></div><textarea id="textInput" rows="3" placeholder="例如：我以为这次又要一个人收拾残局，没想到大家都留了下来。" required></textarea>
+          <label for="contextInput" class="field-label">语境</label><textarea id="contextInput" rows="3" placeholder="写下先发生了什么、人物关系或前因"></textarea>
+          <div class="character-row"><label for="characterInput">代入谁的感受？</label><input id="characterInput" value="我" maxlength="100"></div>
+        </section>
+        <section class="form-section action-section">
+          <label class="compare-toggle"><input type="checkbox" id="compareToggle"><span>同一句话，再选一个向量对比</span></label><div id="comparePanel" hidden><label for="compareSelect" class="sr-only">对比向量</label><select id="compareSelect"></select><div id="customComparePanel" hidden><label for="compareJSON" class="field-label">第二个向量</label><textarea id="compareJSON" class="code-input" rows="4" placeholder="粘贴第二个profile.json，或12个数的数组"></textarea></div></div>
+          <div id="formError" class="error-message" role="alert" hidden></div>
+          <button type="submit" id="analyzeButton" class="primary-button"><span>开始分析</span><span aria-hidden="true">→</span></button>
+          <p class="split-policy-note">句读标点保留，按意义细分，不限定块数。</p><div class="action-note"><span>Ctrl + Enter 开始分析</span><span>在本机运行</span></div>
+          <div id="progressPanel" class="progress-panel" role="status" hidden><span class="spinner"></span><div><strong id="progressMessage">正在准备</strong><span id="progressElapsed">已等待 0 秒</span></div></div>
+        </section>
+      </form>
+      <section class="result-area" aria-label="分析结果">
+        <div id="emptyState" class="empty-state"><span class="empty-label">从一段话开始</span><div class="empty-illustration" aria-hidden="true"><div class="sentence-line"></div><div class="meaning-pieces"><span>意元 1</span><span>意元 2</span><span>…</span></div><div class="flow-connector"></div><div class="emotion-pieces"><i></i><i></i><i></i><i></i><i></i></div></div><h2>在左侧选好内容，开始第一次分析</h2><p>这里会依次展示意元划分、每一步的感受，以及感受怎样变化。</p><button id="emptyAnalyze" type="button" class="primary-button">分析当前内容 <span aria-hidden="true">→</span></button><p id="emptyProgress" class="empty-progress" role="status" hidden></p><div class="empty-features"><span><b>01</b> 意元划分</span><span><b>02</b> 情绪组成</span><span><b>03</b> 相邻变化</span></div></div>
+        <div id="resultContent" hidden>
+          <div class="result-heading"><div><span id="resultFlag" class="eyebrow">分析结果</span><h2 id="resultTitle"></h2></div><div class="result-actions"><button type="button" id="reanalyzeButton" class="secondary-button">重新分析</button><button type="button" id="exportResult" class="secondary-button">导出结果</button></div></div>
+          <div id="staleNotice" class="draft-note" hidden>输入已修改，点击“开始分析”更新结果。</div>
+          <div id="runTabs" class="run-tabs" hidden></div>
+          <div id="comparisonSummary" class="comparison-summary" hidden></div>
+          <div class="result-card unit-card"><div class="card-head"><h3>意元划分</h3><span id="runSource" class="source-tag"></span></div><div id="unitList" class="unit-list"></div><div class="result-meta"><span id="endFeeling"></span><span id="timingInfo"></span></div><details class="result-context"><summary>查看本次使用的语境</summary><p id="resultContext"></p><span id="resultCharacter"></span></details></div>
+          <div class="result-card visualization-card"><div class="view-tabs" role="tablist" aria-label="结果展示方式"><button type="button" class="selected" data-view="trajectory" role="tab" aria-selected="true">感受轨迹</button><button type="button" data-view="matrix" role="tab" aria-selected="false">情绪矩阵</button><button type="button" data-view="delta" role="tab" aria-selected="false">变化矩阵</button><button type="button" data-view="json" role="tab" aria-selected="false">原始JSON</button></div>
+            <div id="trajectoryView" class="view-panel"><div class="chart-head"><p>读到每个意元末尾时，感受如何变化</p><label><input type="checkbox" id="autoScale" checked> 自动纵轴</label></div><div id="emotionLegend" class="emotion-legend"></div><div id="trajectoryChart" class="chart-container"></div><div class="detail-heading"><h3 id="pointHeading">开始前的感受</h3><span>点击意元或曲线上的点查看</span></div><div id="emotionBars" class="emotion-bars"></div></div>
+            <div id="matrixView" class="view-panel" hidden><p class="view-description">每一行对应一个记录位置，展示十种感受的组成。</p><div id="emotionMatrix" class="matrix-scroll"></div></div>
+            <div id="deltaView" class="view-panel" hidden><div class="delta-heading"><p class="view-description">与上一个位置相比，哪些感受增加或减少？</p><span>单位：百分点 <i class="increase-dot"></i>增加 <i class="decrease-dot"></i>减少</span></div><div id="deltaMatrix" class="matrix-scroll"></div></div>
+            <div id="jsonView" class="view-panel" hidden><div class="json-heading"><span>本次选中向量的完整输出</span><button type="button" id="copyJSON" class="text-button">复制JSON</button></div><pre id="rawJSON" class="raw-json"></pre></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer><span>Meaning → Feeling</span><span>9B语义读出 · 本人历史融合与原版校准 · 本地推理</span><button id="footerHelp" class="text-button">怎么看这些结果？</button></footer>
+  </main>
+  <dialog id="helpDialog"><div class="dialog-heading"><h2>怎么使用这个试用台</h2><button id="closeHelp" class="close-button" aria-label="关闭帮助">×</button></div><div class="help-content"><h3>先选人，再看同一句话</h3><p>选择内置个人向量，或导入你保存的profile.json。填写句子、语境和代入人物，然后点击“开始分析”。勾选对比后，可以让两个向量处理同一份内容。</p><h3>三种结果分别表示什么？</h3><p><b>意元划分</b>：模型把原句分成哪些意义块。<b>情绪矩阵</b>：读到各块末尾时，十种感受各占多少。<b>变化矩阵</b>：当前感受减去上一个位置的感受，正值表示增加，负值表示减少，单位为百分点。</p><h3>个人向量怎样影响切分？</h3><p>模型依据全文和历史细分倾向判断切点，句读标点固定保留，不限定块数。不同向量可能得到相同切分。新版历史融合分别调整开始前和阅读中的感受；展开向量说明可查看均值、历史段数和融合比例。</p><h3>向量从哪里来？</h3><p>标注为“真人历史校准”的示例来自已有独立历史，使用当前模型的配套数值头生成。“手动演示”是预设参数，便于查看偏移和切分倾向的作用。你也可以在“历史生成”里，用自己在其他材料上的作答生成新向量。</p><h3>加载与显存</h3><p>第一次分析会加载9B模型，后续分析复用已加载模型。结束使用时点击“释放显存”，彻底退出可双击“停止模型试用台.cmd”。输入超过当前模型窗口时，缩短句子或语境后再试。</p></div><button id="finishHelp" class="primary-button">回到试用台</button></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

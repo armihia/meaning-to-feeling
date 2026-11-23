@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meaning-to-feeling"
+version = "1.2.0"
+requires-python = ">=3.10"
+description = "带个体历史校准的意元切分与情绪矩阵推理"
+dependencies = ["numpy>=1.24,<3", "jieba==0.42.1", "psutil>=5.9", "python-dotenv>=1.0"]
+
+[tool.setuptools.packages.find]
+include = ["meaning_to_feeling*"]
+
+[tool.setuptools.package-data]
+meaning_to_feeling = ["web/*.html", "web/*.css", "web/*.js"]

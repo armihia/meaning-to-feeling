@@ -1,0 +1,41 @@
+{
+  "label_source": "illustrative",
+  "emotion_order": [
+    "joy",
+    "sadness",
+    "anger",
+    "fear",
+    "surprise",
+    "anxiety",
+    "frustration",
+    "confusion",
+    "guilt",
+    "neutral"
+  ],
+  "history": [
+    {
+      "sample_id": "example-1",
+      "text": "我终于完成了任务。",
+      "context_text": "这项工作已经持续了一周。",
+      "target_character": "我",
+      "emotion_observations": [
+        {
+          "end_char": 9,
+          "values": [
+            0.6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0.4
+          ]
+        }
+      ],
+      "boundary_observations": []
+    }
+  ]
+}
